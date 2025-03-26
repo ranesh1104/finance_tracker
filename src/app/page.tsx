@@ -46,7 +46,13 @@ const getNodeColor = (name: string): string => {
   return pastelColors[index]
 }
 
-const CustomNode = ({ x, y, width, height, payload }: any) => {
+const CustomNode = ({ x, y, width, height, payload }: {
+  x: number
+  y: number
+  width: number
+  height: number
+  payload: { name: string }
+}) => {
   const color = getNodeColor(payload.name)
   return (
     <g>
@@ -126,7 +132,13 @@ export default function Home() {
   const totalExpenses = parsedData.reduce((sum, row) => sum + Number.parseFloat(row['Amount Paid']?.replace(/[$,]/g, '') || '0'), 0)
   const percentSaved = totalIncome > 0 ? ((totalIncome - totalExpenses) / totalIncome) * 100 : 0
 
-  const CustomTooltip = ({ active, payload }: { active?: boolean; payload?: any }) => {
+  const CustomTooltip = ({ active, payload }: { active?: boolean; payload?: Array<{
+    payload: {
+      sourceName: string
+      targetName: string
+      value: number
+    }
+  }> }) => {
     if (active && payload?.length && payload[0].payload) {
       const { sourceName, targetName, value } = payload[0].payload
       const percent = totalIncome > 0 ? (value / totalIncome) * 100 : 0
@@ -177,7 +189,7 @@ export default function Home() {
 
     Object.keys(categoryTotals).forEach((cat) => addNode(cat))
 
-    const reverseNodeMap = Object.fromEntries(Array.from(nodeMap.entries()).map(([k, v]) => [v, k]))
+    // const reverseNodeMap = Object.fromEntries(Array.from(nodeMap.entries()).map(([k, v]) => [v, k]))
 
     const links: {
       source: number
